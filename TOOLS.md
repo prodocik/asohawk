@@ -522,13 +522,13 @@ Manage tracking: add apps, track or archive keywords, set countries, add competi
 
 ### snapshot_asa_popularity
 
-**Scope:** write | **Cost:** expensive | **Version:** 1.0.0
+**Scope:** write | **Cost:** expensive | **Version:** 2.0.0
 
-Measure exact Apple Search Ads Search Popularity for chosen tracked keywords by starting a paid Apify run against the workspace's own account, and return the cost estimate with the run id.
+Price a paid measurement of exact Apple Search Ads Search Popularity for chosen tracked keywords. Never starts the run: the agent spending cap is $0 by the owner's decision, so this returns the estimate to relay, and the user starts the run from the Keywords page.
 
-**Use when:** a decision turns on real demand and the keywords you care about still show popularity_source 'proxy' or null; you want the price of measuring a keyword set before proposing it to your user (call with estimate_only).
+**Use when:** a decision turns on real demand and the keywords you care about still show popularity_source 'proxy' or null — price the set and hand your user the number; you want the price of measuring a keyword set before proposing it to your user.
 
-**Don't use when:** the keyword already has popularity_source 'asa' — that reading is this workspace's own exact number and re-measuring costs money for the same value; you only need a rough demand ordering; the proxy estimate is free and already there; you want the result — this only starts the run; poll get_asa_snapshot_status.
+**Don't use when:** the keyword already has popularity_source 'asa' — that reading is this workspace's own exact number and re-measuring costs money for the same value; you only need a rough demand ordering; the proxy estimate is free and already there; you expect this call to start the measurement — it cannot; only the user can start a paid run, from the Keywords page.
 
 ### create_task
 
