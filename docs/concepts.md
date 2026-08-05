@@ -12,6 +12,8 @@ Write access on the key only decides whether the agent can call write tools at a
 
 Metadata changes always go through `propose_metadata_change`, which creates a change a human approves, then `apply_change`, which publishes it to App Store Connect. The agent never publishes to the App Store without that approval, except for the narrow set of operations a workspace has explicitly set to Auto. A high-risk metadata change, such as a full name or description rewrite, additionally needs the High-risk changes setting to be Auto too; by default it is Ask, so a high-risk change always waits for a human until the workspace owner opts in.
 
+One operation type reads Ask differently: **Run ASA snapshots**, which spends the workspace's own Apify credits to measure exact Apple Search Ads popularity. There is nothing to file for review, because the proposal is a charge rather than a change to the listing, so Ask (the default) refuses the call and hands back the cost estimate for the agent to relay; the human then runs it from the Keywords page, or switches the setting to Auto. Auto lets the agent spend on its own, capped at three runs an hour for the workspace.
+
 The same page also has a Reading section: each data domain (keywords, metadata, reviews, competitors, acquisition and revenue, product analytics, release) can be set to Allow or Deny independently of the write policy, so a workspace can, for example, turn off keyword reads for the agent while everything else keeps working. There is no Ask for reads; Deny refuses the call outright with no approval queue.
 
 ## Response envelope

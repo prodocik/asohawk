@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://asohawk.cc"><img src="https://img.shields.io/badge/website-asohawk.cc-b45309" alt="Website"></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_registry-io.github.prodocik%2Fasohawk-121212" alt="MCP Registry"></a>
-  <a href="TOOLS.md"><img src="https://img.shields.io/badge/MCP_tools-61-121212" alt="Tool count"></a>
+  <a href="TOOLS.md"><img src="https://img.shields.io/badge/MCP_tools-64-121212" alt="Tool count"></a>
 </p>
 
 ASOHawk is an ASO platform your AI agent uses directly. It speaks [MCP](https://modelcontextprotocol.io), the protocol Claude Code, Claude Desktop, Cursor, Codex and most agent CLIs already understand. Point an agent at it once and it reads your App Store rankings, keywords, competitors, reviews and revenue, and manages tracking and metadata on request.
@@ -156,12 +156,12 @@ Exact snippets for every client, plus a stdio bridge for clients without remote 
 
 ## What the agent can do
 
-61 tools cover the full ASO loop: rankings and keyword tracking, competitor discovery and monitoring, review streams, ASO health and recommendations, acquisition and retention funnels, revenue, keyword difficulty and popularity scoring, chart moves, hypotheses and learnings, App Store Connect metadata edits, screenshot changes, native A/B tests (Product Page Optimization), IAP and subscription repricing, build attachment and App Review submission.
+64 tools cover the full ASO loop: rankings and keyword tracking, competitor discovery and monitoring, review streams, ASO health and recommendations, acquisition and retention funnels, revenue, keyword difficulty and popularity scoring, exact Apple Search Ads popularity on demand, chart moves, hypotheses and learnings, App Store Connect metadata edits, screenshot changes, native A/B tests (Product Page Optimization), IAP and subscription repricing, build attachment and App Review submission.
 
 Every tool returns the same envelope: the answer under `data`, plus `data_freshness`, honest `limitations`, `recommended_next_capabilities` and a `cost_class`. Agents do not guess what a number means or what to call next; the response says so.
 
 - **[Tool reference](TOOLS.md)**: every tool with its contract, generated from the live registry.
-- **[Playbooks](docs/playbooks.md)**: 14 step-by-step recipes, from onboarding an app to shipping a build through App Review.
+- **[Playbooks](docs/playbooks.md)**: 15 step-by-step recipes, from onboarding an app to shipping a build through App Review.
 - **[Concepts](docs/concepts.md)**: authentication, permissions, the response envelope, errors, cost classes.
 
 ## Built for trust
