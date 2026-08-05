@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" fill="none" role="img" aria-label="Your agent connects to ASOHawk over MCP; ASOHawk reads the App Store and writes to App Store Connect after human approval.">
+  <style>
+    .h { font: 600 12px ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: 0.08em; fill: #b45309; }
+    .t { font: 400 14px ui-sans-serif, -apple-system, "Segoe UI", sans-serif; fill: #5c5c5c; }
+    .s { font: 500 13px ui-sans-serif, -apple-system, "Segoe UI", sans-serif; fill: #121212; }
+    .m { font: 400 11px ui-monospace, "SF Mono", Menlo, Consolas, monospace; fill: #9c9c9c; }
+    .a { font: 500 12px ui-sans-serif, -apple-system, "Segoe UI", sans-serif; fill: #b45309; }
+  </style>
+
+  <!-- Your agent -->
+  <rect x="40" y="70" width="280" height="240" rx="10" fill="#f7f7f7" stroke="#e6e6e6"/>
+  <text x="64" y="104" class="h">YOUR AGENT</text>
+  <text x="64" y="136" class="t">Claude Code</text>
+  <text x="64" y="162" class="t">Claude Desktop</text>
+  <text x="64" y="188" class="t">Cursor</text>
+  <text x="64" y="214" class="t">Codex</text>
+  <text x="64" y="240" class="t">Qwen Code</text>
+  <text x="64" y="266" class="t">Kimi CLI</text>
+  <text x="64" y="292" class="t">Gemini CLI</text>
+
+  <!-- Agent to ASOHawk -->
+  <line x1="320" y1="190" x2="462" y2="190" stroke="#d4d4d4" stroke-width="1.5"/>
+  <path d="M462 190 l-9 -5 v10 z" fill="#d4d4d4"/>
+  <text x="391" y="172" text-anchor="middle" class="s">MCP over HTTPS</text>
+  <text x="391" y="212" text-anchor="middle" class="m">Bearer ahk_...</text>
+
+  <!-- ASOHawk -->
+  <rect x="470" y="40" width="340" height="300" rx="10" fill="#ffffff" stroke="#d4d4d4"/>
+  <text x="494" y="74" class="h">ASOHAWK</text>
+  <text x="494" y="106" class="t">rankings and keywords</text>
+  <text x="494" y="132" class="t">competitors and reviews</text>
+  <text x="494" y="158" class="t">recommendations and ASO health</text>
+  <text x="494" y="184" class="t">acquisition, retention, revenue</text>
+  <text x="494" y="210" class="t">metadata and screenshot changes</text>
+  <text x="494" y="236" class="t">builds, releases, A/B tests</text>
+  <line x1="470" y1="262" x2="810" y2="262" stroke="#e6e6e6"/>
+  <text x="494" y="292" class="a">writes wait for human approval</text>
+  <text x="494" y="316" class="m">read scope / write scope keys</text>
+
+  <!-- ASOHawk to App Store -->
+  <line x1="810" y1="190" x2="952" y2="190" stroke="#d4d4d4" stroke-width="1.5"/>
+  <path d="M952 190 l-9 -5 v10 z" fill="#d4d4d4"/>
+  <text x="881" y="172" text-anchor="middle" class="s">App Store Connect</text>
+  <text x="881" y="212" text-anchor="middle" class="m">reads + writes</text>
+
+  <!-- App Store -->
+  <rect x="960" y="70" width="200" height="240" rx="10" fill="#f7f7f7" stroke="#e6e6e6"/>
+  <text x="984" y="104" class="h">APP STORE</text>
+  <text x="984" y="136" class="t">search rankings</text>
+  <text x="984" y="162" class="t">top charts</text>
+  <text x="984" y="188" class="t">listings</text>
+  <text x="984" y="214" class="t">reviews</text>
+  <text x="984" y="240" class="t">analytics</text>
+  <text x="984" y="266" class="t">releases</text>
+</svg>
