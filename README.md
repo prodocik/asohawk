@@ -163,6 +163,7 @@ Every tool returns the same envelope: the answer under `data`, plus `data_freshn
 - **[Tool reference](TOOLS.md)**: every tool with its contract, generated from the live registry.
 - **[Playbooks](docs/playbooks.md)**: 15 step-by-step recipes, from onboarding an app to shipping a build through App Review.
 - **[Concepts](docs/concepts.md)**: authentication, permissions, the response envelope, errors, cost classes.
+- **[Prompt library](docs/prompts.md)**: copyable everyday prompts for setup, data, ASO work and safe execution.
 
 ## Built for trust
 
