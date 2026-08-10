@@ -4,7 +4,7 @@ How the ASOHawk MCP surface is designed: authentication, the safety model around
 
 ## Authentication and scopes
 
-Every request is authenticated with an `ahk_` API key, created in your workspace's **Settings → API keys**. A key has one of two scopes: **read**, which covers every inspection and discovery tool, or **write**, which additionally unlocks tools that change tracking or propose App Store metadata edits. The key is shown once at creation; store it like a password. A write tool is invisible to a read-only key, not just refused. If the workspace member who created a key is suspended, that key stops working for the duration of the suspension and resumes automatically once they're reinstated; keys created by other members of the workspace are unaffected.
+Every request is authenticated with an `ahk_` API key, created in your workspace's **Settings → API keys**. A key has one of two scopes: **read**, which covers every inspection tool, or **write**, which additionally unlocks tools that change tracking or propose App Store metadata edits. The key is shown once at creation; store it like a password. A write tool is invisible to a read-only key, not just refused. If the workspace member who created a key is suspended, that key stops working for the duration of the suspension and resumes automatically once they're reinstated; keys created by other members of the workspace are unaffected.
 
 ## Permissions and approvals
 

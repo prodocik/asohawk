@@ -12,7 +12,7 @@ https://asohawk.cc/api/mcp
 
 Sign up at [asohawk.cc](https://asohawk.cc) (free plan, no credit card). In your workspace, open **Settings → API keys** and create a key. Read by default; add write to let the agent manage tracking and propose App Store changes. The key is shown once, store it like a password.
 
-Every key is scoped: **read** covers every inspection and discovery tool, **write** additionally unlocks tools that change tracking or propose App Store metadata edits. A write tool is invisible to a read-only key, not just refused.
+Every key is scoped: **read** covers every inspection tool, **write** additionally unlocks tools that change tracking or propose App Store metadata edits. A write tool is invisible to a read-only key, not just refused.
 
 ## 2. Connect your client
 

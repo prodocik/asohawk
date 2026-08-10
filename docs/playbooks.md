@@ -9,8 +9,8 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 1. `search_appstore` or `add_app` puts the app in the workspace. Both are idempotent, safe to call again. Not live on the App Store yet? `import_asc_app` instead, from a connected App Store Connect account (see [Manage a pre-launch app](#manage-a-pre-launch-app)).
 2. `set_countries` sets the storefronts to track.
 3. `estimate_app_performance` on the app and 3 to 5 obvious competitors sizes the niche before spending calls on tracking.
-4. `discover_competitors` or `run_discovery`, then `add_competitor` on the relevant results.
-5. `discover_keyword_opportunities` and `inspect_metadata` build a starting keyword set, then `track_keywords` within quota.
+4. `discover_competitors`, then `add_competitor` on the relevant results.
+5. Research a starting keyword set for the selected storefront, then `track_keywords` within quota.
 6. `refresh_now` takes the first snapshot; `get_aso_health` and `get_recommendations` give a baseline report of where the app stands.
 7. `record_learning` saves the starting picture; `create_task` for anything that needs a human, such as connecting App Store Connect or GA4, or shooting screenshots.
 
@@ -21,8 +21,8 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 1. `import_asc_app` with the ASC app id or bundle id imports it as pre-launch; `add_app`'s Lookup would fail here since there is nothing to look up yet.
 2. `get_release_readiness`'s `data.prelaunch` checklist tracks what is still missing: ASO text and screenshots per locale, category, age rating, price, availability and the App Privacy questionnaire (non-authoritative, a human confirms it).
 3. Fill in the listing the same way as for a live app: `propose_metadata_change` and/or `propose_screenshot_change`, then `apply_change` once a human approves.
-4. `track_keywords` and `run_discovery` stay off limits meanwhile: no App Store listing means nothing to rank or discover keywords against yet.
-5. Publication is detected automatically (a daily check), not a manual step. Once the app ships, `data.prelaunch` turns null and keyword tracking, rank collection and discovery all unlock on their own.
+4. `track_keywords` stays off limits meanwhile: no App Store listing means nothing to rank against yet.
+5. Publication is detected automatically (a daily check), not a manual step. Once the app ships, `data.prelaunch` turns null and keyword tracking and rank collection unlock on their own.
 
 ## Diagnose conversion
 
@@ -57,11 +57,13 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 
 **When:** growing the tracked keyword set.
 
-1. `discover_keyword_opportunities` surfaces candidates not yet tracked.
-2. `inspect_keyword` filters candidates by difficulty and popularity.
+1. Research candidates for the target storefront and treat their demand bands as hypotheses until tracked.
+2. `inspect_keyword` evaluates candidates after they have been collected.
 3. `get_recommendations`: the New bucket is what to add.
 4. `inspect_competitor`: keywords they rank for that this app does not.
 5. `track_keywords` the best candidates; `archive_keywords` the dead ones to free quota.
+
+In the web app, an ASC locale with no tracked terms offers **Copy keyword research prompt**. The English prompt is prefilled with the app and selected locale; its demand bands are research hypotheses, not download or search-volume forecasts.
 
 ## Measure real demand
 

@@ -156,7 +156,7 @@ Exact snippets for every client, plus a stdio bridge for clients without remote 
 
 ## What the agent can do
 
-64 tools cover the full ASO loop: rankings and keyword tracking, competitor discovery and monitoring, review streams, ASO health and recommendations, acquisition and retention funnels, revenue, keyword difficulty and popularity scoring, exact Apple Search Ads popularity on demand, chart moves, hypotheses and learnings, App Store Connect metadata edits, screenshot changes, native A/B tests (Product Page Optimization), IAP and subscription repricing, build attachment and App Review submission.
+61 tools cover the full ASO loop: rankings and keyword tracking, competitor discovery and monitoring, review streams, ASO health and recommendations, acquisition and retention funnels, revenue, keyword difficulty and popularity scoring, exact Apple Search Ads popularity on demand, chart moves, hypotheses and learnings, App Store Connect metadata edits, screenshot changes, native A/B tests (Product Page Optimization), IAP and subscription repricing, build attachment and App Review submission.
 
 Every tool returns the same envelope: the answer under `data`, plus `data_freshness`, honest `limitations`, `recommended_next_capabilities` and a `cost_class`. Agents do not guess what a number means or what to call next; the response says so.
 
