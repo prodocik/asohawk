@@ -187,9 +187,9 @@ Find terms where two or more of your own apps currently rank in the same storefr
 
 Report the live state of one ASA snapshot run: queued, running, succeeded or failed, how many keywords it asked about, how many the provider answered for, how many readings were stored, and the failure reason if it failed.
 
-**Use when:** you started a snapshot with snapshot_asa_popularity and need to know whether the readings landed; a run seems to have produced nothing and you need to tell a failure apart from a set of low-demand keywords the provider would not put a real number on; you paid for a run and want to know whether the provider actually answered for everything it was asked about.
+**Use when:** a human started a snapshot from ASOHawk Keywords and gave you its run_id, and you need to know whether the readings landed; a run seems to have produced nothing and you need to tell a failure apart from a set of low-demand keywords the provider would not put a real number on; you paid for a run and want to know whether the provider actually answered for everything it was asked about.
 
-**Don't use when:** you want the popularity values themselves (use find_keywords or inspect_keyword).
+**Don't use when:** you want the popularity values themselves (use find_keywords or inspect_keyword); you only called snapshot_asa_popularity to price a set — it never starts a run or returns a run_id.
 
 ### get_competitors
 
@@ -499,13 +499,13 @@ Manage tracking: add apps, track or archive keywords, set countries and add comp
 
 ### snapshot_asa_popularity
 
-**Scope:** write | **Cost:** expensive | **Version:** 2.0.0
+**Scope:** write | **Cost:** expensive | **Version:** 2.1.0
 
-Price a paid measurement of exact Apple Search Ads Search Popularity for chosen tracked keywords. Never starts the run: the agent spending cap is $0 by the owner's decision, so this returns the estimate to relay, and the user starts the run from the Keywords page.
+Price a paid measurement of exact Apple Search Ads Search Popularity through this ASOHawk workspace's connected Apify account. Never starts the run: the agent spending cap is $0, so it returns the estimate and the exact ASOHawk hand-off for a human to start from Keywords (hard cap $5 per run).
 
-**Use when:** a decision turns on real demand and the keywords you care about still show popularity_source 'proxy' or null — price the set and hand your user the number; you want the price of measuring a keyword set before proposing it to your user.
+**Use when:** a decision turns on real demand and the keywords you care about still show popularity_source 'proxy' or null — price the set and hand your user the ASOHawk Keywords-page hand-off; you want the price of measuring a keyword set before proposing it to your user.
 
-**Don't use when:** the keyword already has popularity_source 'asa' — that reading is this workspace's own exact number and re-measuring costs money for the same value; you only need a rough demand ordering; the proxy estimate is free and already there; you expect this call to start the measurement — it cannot; only the user can start a paid run, from the Keywords page.
+**Don't use when:** the keyword already has popularity_source 'asa' — that reading is this workspace's own exact number and re-measuring costs money for the same value; you only need a rough demand ordering; the proxy estimate is free and already there; you expect this call to start the measurement — it cannot; only the user can start it inside ASOHawk from Keywords, using this workspace's connected Apify account.
 
 ### create_task
 
