@@ -111,7 +111,7 @@ Report what the workspace has connected: how many apps (own vs competitor), whic
 
 ### get_agent_permissions
 
-**Scope:** read | **Cost:** cheap | **Version:** 1.1.0
+**Scope:** read | **Cost:** cheap | **Version:** 1.2.0
 
 Report this API key's scopes, whether it may take write actions, its rate limits, this workspace's auto/ask/deny write policy per operation type, and its allow/deny read policy per data domain, so the agent knows the boundaries of what it can do.
 
@@ -187,9 +187,9 @@ Find terms where two or more of your own apps currently rank in the same storefr
 
 Report the live state of one ASA snapshot run: queued, running, succeeded or failed, how many keywords it asked about, how many the provider answered for, how many readings were stored, and the failure reason if it failed.
 
-**Use when:** a human started a snapshot from ASOHawk Keywords and gave you its run_id, and you need to know whether the readings landed; a run seems to have produced nothing and you need to tell a failure apart from a set of low-demand keywords the provider would not put a real number on; you paid for a run and want to know whether the provider actually answered for everything it was asked about.
+**Use when:** you started a budget-confirmed ASA snapshot and need to know whether its readings landed; a run seems to have produced nothing and you need to tell a failure apart from a set of low-demand keywords the provider would not put a real number on; you paid for a run and want to know whether the provider actually answered for everything it was asked about.
 
-**Don't use when:** you want the popularity values themselves (use find_keywords or inspect_keyword); you only called snapshot_asa_popularity to price a set — it never starts a run or returns a run_id.
+**Don't use when:** you want the popularity values themselves (use find_keywords or inspect_keyword); you only called snapshot_asa_popularity with estimate_only — it does not start a run or return a run_id.
 
 ### get_competitors
 
@@ -499,13 +499,13 @@ Manage tracking: add apps, track or archive keywords, set countries and add comp
 
 ### snapshot_asa_popularity
 
-**Scope:** write | **Cost:** expensive | **Version:** 2.1.0
+**Scope:** write | **Cost:** expensive | **Version:** 3.0.0
 
-Price a paid measurement of exact Apple Search Ads Search Popularity through this ASOHawk workspace's connected Apify account. Never starts the run: the agent spending cap is $0, so it returns the estimate and the exact ASOHawk hand-off for a human to start from Keywords (hard cap $5 per run).
+Estimate or, after the user gives a budget and explicitly confirms the exact set, start a paid Apple Search Ads Search Popularity measurement through this ASOHawk workspace's connected Apify account. The confirmed per-run cap is enforced again by the worker and can never exceed $5.
 
-**Use when:** a decision turns on real demand and the keywords you care about still show popularity_source 'proxy' or null — price the set and hand your user the ASOHawk Keywords-page hand-off; you want the price of measuring a keyword set before proposing it to your user.
+**Use when:** a decision turns on real demand and the keywords you care about still show popularity_source 'proxy' or null — first price a useful set, then obtain a budget and final confirmation before starting it; you want the price of measuring a keyword set before proposing the exact paid run to your user.
 
-**Don't use when:** the keyword already has popularity_source 'asa' — that reading is this workspace's own exact number and re-measuring costs money for the same value; you only need a rough demand ordering; the proxy estimate is free and already there; you expect this call to start the measurement — it cannot; only the user can start it inside ASOHawk from Keywords, using this workspace's connected Apify account.
+**Don't use when:** the keyword already has popularity_source 'asa' — that reading is this workspace's own exact number and re-measuring costs money for the same value; you only need a rough demand ordering; the proxy estimate is free and already there; the user has not explicitly confirmed the exact selection after seeing its estimate — use estimate_only and ask first.
 
 ### create_task
 
