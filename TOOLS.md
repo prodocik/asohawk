@@ -297,11 +297,11 @@ Return the ASO health checklist for an app (metadata completeness, ratings, top-
 
 ### get_reviews
 
-**Scope:** read | **Cost:** standard | **Version:** 1.0.0
+**Scope:** read | **Cost:** standard | **Version:** 2.0.0
 
-Return recent reviews for an app plus the star distribution and average.
+Return recent reviews from every collected App Store storefront, with a storefront on each review plus the combined star distribution and average.
 
-**Use when:** you want to read recent user feedback and sentiment.
+**Use when:** you want to read user feedback and sentiment across an app's storefronts.
 
 **Don't use when:** you want metadata (use inspect_metadata).
 
@@ -583,13 +583,13 @@ Stop tracking (archive) keyword subscriptions for an app; history is kept.
 
 ### set_countries
 
-**Scope:** write | **Cost:** cheap | **Version:** 1.0.0
+**Scope:** write | **Cost:** cheap | **Version:** 1.1.0
 
-Replace the storefronts an app shows in the UI/country switcher. For an OWN app, this also starts reviews collection in any newly-added country; ranks/metadata/popularity still follow active keywords per country, not this list. For a competitor, the whole list is UI-only — use track_keywords in a new country to actually start collecting there.
+Replace the storefronts an app shows in the UI/country switcher. This does not start or stop collection: ranks, metadata and popularity follow active keywords, while OWN-app reviews are collected separately across all supported storefronts. For a competitor, the whole list is UI-only — use track_keywords in a new country to start collecting there.
 
-**Use when:** you want a country visible/selectable in the UI before adding keywords there; you want to prune countries with no keywords out of the switcher; you want reviews collection to start for an own app in a new country without tracking a keyword there yet.
+**Use when:** you want a country visible/selectable in the UI before adding keywords there; you want to prune countries with no keywords out of the switcher; you want to change the storefronts an app exposes without changing its collection scope.
 
-**Don't use when:** you want to add a competitor in another country (use add_competitor); you want to start or stop RANKS collection in a country (track keywords there, or archive_keywords the ones there — ranks/metadata/popularity always follow keywords, never this list).
+**Don't use when:** you want to add a competitor in another country (use add_competitor); you want to start or stop RANKS collection in a country (track keywords there, or archive_keywords the ones there — ranks/metadata/popularity always follow keywords, never this list); you want to start, stop, or limit review collection; OWN-app reviews are collected separately across all supported storefronts.
 
 ### add_competitor
 
