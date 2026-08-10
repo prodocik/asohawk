@@ -111,7 +111,7 @@ Report what the workspace has connected: how many apps (own vs competitor), whic
 
 ### get_agent_permissions
 
-**Scope:** read | **Cost:** cheap | **Version:** 1.0.0
+**Scope:** read | **Cost:** cheap | **Version:** 1.1.0
 
 Report this API key's scopes, whether it may take write actions, its rate limits, this workspace's auto/ask/deny write policy per operation type, and its allow/deny read policy per data domain, so the agent knows the boundaries of what it can do.
 
