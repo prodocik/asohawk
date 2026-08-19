@@ -19,7 +19,7 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 **When:** onboarding your own app before it has a public App Store listing, via a connected App Store Connect account.
 
 1. `import_asc_app` with the ASC app id or bundle id imports it as pre-launch; `add_app`'s Lookup would fail here since there is nothing to look up yet.
-2. `get_release_readiness`'s `data.prelaunch` checklist tracks what is still missing: ASO text and screenshots per locale, category, age rating, price, availability and the App Privacy questionnaire (non-authoritative, a human confirms it).
+2. `get_release_readiness`'s `data.prelaunch` checklist tracks what is still missing: ASO text and screenshots per locale, category, age rating, price, availability, in-app purchases in a state App Review accepts, and the App Privacy questionnaire (non-authoritative, a human confirms it). `data.manual_steps` lists what has to happen in the App Store Connect web UI instead, because no API reaches it: attaching in-app purchases to a first version, product review screenshots, the health-regulation questions Health & Fitness and Medical apps are asked, and the privacy labels.
 3. Fill in the listing the same way as for a live app: `propose_metadata_change` and/or `propose_screenshot_change`, then `apply_change` once a human approves.
 4. `track_keywords` stays off limits meanwhile: no App Store listing means nothing to rank against yet.
 5. Publication is detected automatically (a daily check), not a manual step. Once the app ships, `data.prelaunch` turns null and keyword tracking and rank collection unlock on their own.
@@ -51,7 +51,7 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 2. `inspect_acquisition` shows top countries with traffic but no localized listing.
 3. `inspect_competitor` shows which locales competitors ship.
 4. Rank the gaps by traffic, missing locale and competitor activity.
-5. `propose_metadata_change` with the new locales. The agent translates the copy itself; App Store Connect only validates length and locale codes.
+5. `propose_metadata_change` with the new locales. The agent translates the copy itself; the proposal is checked before it reaches the approval queue. Refused outright: a locale code App Store Connect does not accept (the error names the right one, `sl` to `sl-SI`), a value over that field's character limit in that locale, and an Apple product name in name or subtitle (App Review 5.2.5 rejects those; the keywords field is the place for them). Flagged for the human to confirm: a translated description that lost the source's Privacy Policy or support URL, a keywords field copied verbatim from the source locale, keywords repeating words already in the name or subtitle, and pricing or free-trial claims in description or promotional text.
 
 ## Harvest keywords
 
@@ -143,7 +143,7 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 1. Upload the .ipa yourself, under the user's own App Store Connect credentials: fastlane, Transporter or Xcode. Apple has no REST endpoint for binary upload, so this platform cannot do that step. On Linux, fastlane works through Transporter for Linux (set `FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT=true`). Set `ITSAppUsesNonExemptEncryption` in Info.plist at build time, or the build gets stuck in Missing Compliance and cannot be submitted. `list_builds` shows the build numbers already taken, so pick a higher one.
 2. `list_builds` until the uploaded build shows processing_state VALID. Apple's processing takes 5 to 30 minutes; the tool returns `retry_after_seconds` while the newest build is still processing. FAILED or INVALID means Apple rejected the binary: fix it and upload a new build, a failed one can never be attached.
 3. `attach_build` with `build_id` (or `build_version`) attaches the VALID build to the editable version. If there is no editable version yet, pass the `version_string` the user asked for, verbatim; the platform never invents one on its own.
-4. `get_release_readiness`: its `data.build` section and blockers list say what is still missing. Close each blocker with the matching tool (`propose_metadata_change` for texts, `propose_screenshot_change` for screenshots), each through the usual human approval.
+4. `get_release_readiness`: its `data.build` section and blockers list say what is still missing. Close each blocker with the matching tool (`propose_metadata_change` for texts, `propose_screenshot_change` for screenshots), each through the usual human approval. Read `data.products` and `data.manual_steps` too: a product sitting in `MISSING_METADATA` is skipped by App Review, so the app ships with a paywall selling nothing, and a version created through the API does not inherit the previous version's keywords — the manual steps say so when it happened.
 5. `propose_release_submission` once readiness reports no blockers. Submitting to App Review is always high risk and always waits for a human in Approvals, whatever the workspace's agent permissions say.
 6. After the human approves, `apply_change` sends the version to Apple's review queue; `get_change_status` reports the verification result a few minutes later. From submission on, only Apple decides the outcome.
 
