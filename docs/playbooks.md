@@ -47,7 +47,7 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 
 **When:** deciding which languages to localize first.
 
-1. `inspect_metadata` shows which locales the listing already fills.
+1. `inspect_metadata` shows which locales the listing already fills: `data.asc.locales` is the real list App Store Connect holds for your own connected app, and `data.asc` returns that locale's actual draft text — name, subtitle, keywords, description, whatsNew — as the version about to be submitted carries it, not as the public store shows it today.
 2. `inspect_acquisition` shows top countries with traffic but no localized listing.
 3. `inspect_competitor` shows which locales competitors ship.
 4. Rank the gaps by traffic, missing locale and competitor activity.
@@ -144,8 +144,9 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 2. `list_builds` until the uploaded build shows processing_state VALID. Apple's processing takes 5 to 30 minutes; the tool returns `retry_after_seconds` while the newest build is still processing. FAILED or INVALID means Apple rejected the binary: fix it and upload a new build, a failed one can never be attached.
 3. `attach_build` with `build_id` (or `build_version`) attaches the VALID build to the editable version. If there is no editable version yet, pass the `version_string` the user asked for, verbatim; the platform never invents one on its own.
 4. `get_release_readiness`: its `data.build` section and blockers list say what is still missing. Close each blocker with the matching tool (`propose_metadata_change` for texts, `propose_screenshot_change` for screenshots), each through the usual human approval. Read `data.products` and `data.manual_steps` too: a product sitting in `MISSING_METADATA` is skipped by App Review, so the app ships with a paywall selling nothing, and a version created through the API does not inherit the previous version's keywords — the manual steps say so when it happened.
-5. `propose_release_submission` once readiness reports no blockers. Submitting to App Review is always high risk and always waits for a human in Approvals, whatever the workspace's agent permissions say.
-6. After the human approves, `apply_change` sends the version to Apple's review queue; `get_change_status` reports the verification result a few minutes later. From submission on, only Apple decides the outcome.
+5. Read the text that will actually go to review before proposing the submission: `data.locales` in the same readiness reply carries each locale's name, subtitle and keywords as the editable version holds them, and `inspect_metadata`'s `data.asc` adds that locale's full description and whatsNew. This is the App Store Connect draft, not the public listing — the two routinely differ, and the difference is exactly what App Review will see.
+6. `propose_release_submission` once readiness reports no blockers. Submitting to App Review is always high risk and always waits for a human in Approvals, whatever the workspace's agent permissions say.
+7. After the human approves, `apply_change` sends the version to Apple's review queue; `get_change_status` reports the verification result a few minutes later. From submission on, only Apple decides the outcome.
 
 ## Analyze a native A/B test
 
