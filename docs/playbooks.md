@@ -9,7 +9,7 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 1. `search_appstore` or `add_app` puts the app in the workspace. Both are idempotent, safe to call again. Not live on the App Store yet? `import_asc_app` instead, from a connected App Store Connect account (see [Manage a pre-launch app](#manage-a-pre-launch-app)).
 2. `set_countries` sets the storefronts to track.
 3. `estimate_app_performance` on the app and 3 to 5 obvious competitors sizes the niche before spending calls on tracking.
-4. `discover_competitors`, then `add_competitor` on the relevant results.
+4. `discover_competitors` shows who competes for the same keywords, and `estimate_app_performance` sizes any of them up without tracking them. Tracking one is a separate decision the user makes: `add_competitor` needs their explicit go-ahead while Add competitors is Ask, which is its default.
 5. Research a starting keyword set for the selected storefront, then `track_keywords` within quota.
 6. `refresh_now` takes the first snapshot; `get_aso_health` and `get_recommendations` give a baseline report of where the app stands.
 7. `record_learning` saves the starting picture; `create_task` for anything that needs a human, such as connecting App Store Connect or GA4, or shooting screenshots.
@@ -60,7 +60,7 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 1. Research candidates for the target storefront and treat their demand bands as hypotheses until tracked.
 2. `inspect_keyword` evaluates candidates after they have been collected.
 3. `get_recommendations`: the New bucket is what to add.
-4. `inspect_competitor`: keywords they rank for that this app does not.
+4. `inspect_competitor` and `discover_competitor_keywords` on competitors this workspace already tracks: keywords they rank for that this app does not. Both need the app tracked, and that is not a reason to add one; research runs on `discover_competitors`, `get_charts`, `search_appstore` and `estimate_app_performance`, which need nothing tracked.
 5. `track_keywords` the best candidates; `archive_keywords` the dead ones to free quota.
 
 In the web app, an ASC locale with no tracked terms offers **Copy keyword research prompt**. The English prompt is prefilled with the app and selected locale; its demand bands are research hypotheses, not download or search-volume forecasts.
@@ -130,11 +130,24 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 **When:** repricing one in-app purchase or one subscription. Needs App Store Connect.
 
 1. `inspect_products` lists the app's in-app purchases and subscriptions with their current prices and the exact price Apple offers today; take the product id from there.
-2. `propose_metadata_change` with `iap_price` or `subscription_price`. One proposal carries one product price: the two fields cannot be combined, and repricing several products means several proposals.
-3. `customer_price` must match an existing App Store Connect price point exactly, otherwise the proposal is refused with `INVALID_INPUT`. For an in-app purchase, `base_territory` must be the territory the product's price schedule is actually based on; changing which territory it is based on is not supported.
-4. A human always approves. Price is revenue-affecting, so it is always high risk and never runs on auto, whatever the workspace's policy.
-5. `apply_change` writes it to App Store Connect, then the platform re-reads the product and reports the published price back. For subscriptions, existing subscribers always keep their current price; that guarantee is Apple's and is not configurable here.
-6. Applying a price equal to the one already live is refused with `PRECONDITION_FAILED` (Apple's 409 STATE_ERROR): nothing is written, and the price is most likely already live, possibly changed by hand while the change waited. Re-read it with `inspect_products` before proposing again.
+2. Repricing every country at once is a different tool: see [Price a product for every country](#price-a-product-for-every-country). This playbook changes one territory.
+3. `propose_metadata_change` with `iap_price` or `subscription_price`. One proposal carries one product price: the two fields cannot be combined, and repricing several products means several proposals.
+4. `customer_price` must match an existing App Store Connect price point exactly, otherwise the proposal is refused with `INVALID_INPUT`. For an in-app purchase, `base_territory` must be the territory the product's price schedule is actually based on; changing which territory it is based on is not supported.
+5. A human always approves. Price is revenue-affecting, so it is always high risk and never runs on auto, whatever the workspace's policy.
+6. `apply_change` writes it to App Store Connect, then the platform re-reads the product and reports the published price back. For subscriptions, existing subscribers always keep their current price; that guarantee is Apple's and is not configurable here.
+7. Applying a price equal to the one already live is refused with `PRECONDITION_FAILED` (Apple's 409 STATE_ERROR): nothing is written, and the price is most likely already live, possibly changed by hand while the change waited. Re-read it with `inspect_products` before proposing again.
+
+## Price a product for every country
+
+**When:** one product costs the same everywhere and you want country-appropriate prices. Needs App Store Connect.
+
+1. `inspect_products` gives the product id and its current prices. Decide the base price first: the whole matrix is derived from one territory's price, USA by default.
+2. `propose_price_matrix` with `dry_run: true` shows what the model would do without creating anything. It is an expensive call (dozens of App Store Connect requests), so tune `elasticity`, `floor` and `ceiling` on the dry run rather than on repeated proposals.
+3. Prices come from Apple's own price grid, not from a currency conversion: each territory gets a real price point Apple offers there. `exclude_territories` leaves a country's price untouched; `overrides` sets an explicit coefficient for one country, for example a promotional `0.5`.
+4. For an in-app purchase, `base_territory` must be the territory the price schedule is actually based on. If Apple's schedule is anchored elsewhere, the tool refuses rather than silently rebasing it.
+5. Drop the dry run to create the change. It is always high risk, and it waits for a human in Approvals unless you pass `allow_auto_approve: true` **and** every territory already has a price **and** no territory moves more than 15% **and** the workspace policy allows high-risk changes to run on auto. Otherwise a human approves it.
+6. `apply_change` writes it. An in-app purchase is written as one atomic schedule replacement: it either lands everywhere or nowhere, and territories the matrix excluded keep the price they had. A subscription is written one territory at a time, so it can land partially; the reply lists every territory Apple refused, and re-applying the same matrix picks up the stragglers. Existing subscribers always keep their current price.
+7. `get_change_status` reports the verification a few minutes later: the platform re-reads the live prices and names any territory that does not match what was approved.
 
 ## Publish a new build
 
