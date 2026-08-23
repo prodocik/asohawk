@@ -352,11 +352,11 @@ Summarise an app's product analytics from Google Analytics 4: DAU/WAU/MAU, stick
 
 ### inspect_products
 
-**Scope:** read | **Cost:** expensive | **Version:** 1.0.0
+**Scope:** read | **Cost:** expensive | **Version:** 1.1.0
 
-List the in-app purchases and subscription groups of one of your own App Store Connect-connected apps, with each product's current price read live from App Store Connect.
+List an app's in-app purchases and subscriptions with live prices. Subscription output separates the current storefront price from the next scheduled price and preserved legacy cohort prices.
 
-**Use when:** you need to know what products an app actually sells (consumables, non-consumables, subscription tiers) and at what price; you are about to propose a price change and want the current price and product ids first; the user asks why revenue moved and you want to check whether the price or product line-up explains it.
+**Use when:** you need to know what products an app actually sells (consumables, non-consumables, subscription tiers) and at what price; you are about to propose a price change and need the real current price, product ids and any scheduled or preserved subscription prices first; the user asks why revenue moved and you want to check whether the price or product line-up explains it.
 
 **Don't use when:** you want revenue, proceeds, subscriber counts or churn — that is inspect_revenue; this tool returns list prices, never money earned; you want to CHANGE a price — that is propose_metadata_change (iap_price / subscription_price); this tool is read-only; you only need the app's own store listing text or its app-level price (use inspect_metadata / get_release_readiness); the app has no App Store Connect connection — this tool needs live ASC data and will refuse with PRECONDITION_FAILED.
 
@@ -510,11 +510,11 @@ Estimate or start a paid Apple Search Ads Search Popularity measurement through 
 
 ### create_task
 
-**Scope:** write | **Cost:** standard | **Version:** 1.1.0
+**Scope:** write | **Cost:** standard | **Version:** 1.2.0
 
-Put a task on the user's board (e.g. asking them to approve or do something). Tasks created as part of the prepare_release composite should pass source: 'release', so get_release_readiness can tell them apart from other open tasks.
+Put a task on the user's board. An exact retry with the same source, app, keyword and title reuses the open task; a different title always creates a separate task. prepare_release tasks should pass source: 'release'.
 
-**Use when:** you want the user to take an action you cannot or should not take yourself; as part of the prepare_release composite (see the onboarding reference) — pass source: 'release'.
+**Use when:** you want the user to take an action you cannot or should not take yourself; as part of the prepare_release composite (see the onboarding reference) — pass source: 'release'; you need a separate action item — give it its own title; unrelated titles are never collapsed together.
 
 **Don't use when:** you want to check your own queue (use list_tasks).
 
@@ -656,7 +656,7 @@ Manually close a hypothesis with an outcome and note.
 
 ### propose_metadata_change
 
-**Scope:** write | **Cost:** standard | **Version:** 1.6.0
+**Scope:** write | **Cost:** standard | **Version:** 1.7.0
 
 Propose a metadata change (name/subtitle/description/keywords/promotionalText/whatsNew/marketingUrl/supportUrl, plus primary_category/secondary_category/age_rating/price/available_territories) for human approval; nothing is written to the App Store until apply_change runs on an approved change. Category values are ASC category ids (e.g. PRODUCTIVITY, UTILITIES); game subcategories (GAMES_ACTION, ...) are not supported in v1 — use the top-level GAMES category instead. age_rating changes App Store Connect's age-rating declaration attributes (content-intensity descriptors plus a couple of booleans); kidsAgeBand and lootBox are not supported in v1 — sending either, or any other unrecognized age_rating key, is refused with INVALID_INPUT rather than silently dropped. price changes the app's current base price (revenue-affecting, always high risk, always requires human approval) — customer_price must match an existing App Store Connect price point exactly. available_territories replaces the app's real App Store for-sale territory list (App Store Connect territoryAvailabilities) — this is NOT the same as set_countries, which only controls ASOHawk's own keyword-tracking scope. iap_price and subscription_price change the price of ONE in-app purchase or ONE subscription (ids come from inspect_products) — both are revenue-affecting, always high risk, always human-approved, and never batched: one proposal carries one product price. For subscriptions, existing subscribers always keep their current price; that guarantee is not configurable through this tool. Every proposal goes through a listing pre-flight first: locales must be real App Store Connect metadata locales (bare codes like 'en' or 'fr' are refused with the supported code named), per-locale values must fit the field's character limit, and Apple product names (iPhone, Apple Watch, iOS, ...) in name/subtitle are refused outright as an App Review 5.2.5 rejection. Softer findings — a translated description that dropped the source's Privacy Policy URL, a keywords field copied verbatim from the source locale, keywords repeating the app's own name/subtitle, pricing or free-trial claims in description/promotionalText — become extra required_confirmations the human sees before approving, plus limitations on this call.
 
@@ -666,7 +666,7 @@ Propose a metadata change (name/subtitle/description/keywords/promotionalText/wh
 
 ### apply_change
 
-**Scope:** write | **Cost:** standard | **Version:** 1.5.0
+**Scope:** write | **Cost:** standard | **Version:** 1.6.0
 
 Apply an approved metadata change to the App Store listing. On success, 'limitations' carries non-blocking warnings for any locale on the affected version still missing description/whatsNew (App Store Connect will refuse submission until they are set, but nothing here is blocked by it). A price change is re-verified against a live App Store Connect read immediately before writing (not just the propose-time snapshot) — a price point Apple retired since approval is refused rather than written stale. The same applies to in-app-purchase and subscription prices, and their product id is additionally re-checked against this app's live product list, so an approved change that names a product this app does not own writes nothing.
 
@@ -736,11 +736,11 @@ Propose a native App Store Product Page Optimization (PPO) A/B test with 1-3 tre
 
 ### propose_price_matrix
 
-**Scope:** write | **Cost:** expensive | **Version:** 1.0.0
+**Scope:** write | **Cost:** expensive | **Version:** 1.1.0
 
-Price one in-app purchase or subscription in every App Store territory at once, scaled from one base price by each country's purchasing power, as a change for human approval.
+Price a paid app, in-app purchase, or subscription across App Store territories using country-level GDP/GNI purchasing power, as a change for human approval.
 
-**Use when:** the product costs the same everywhere and you want country-appropriate prices instead; you want to see what purchasing-power pricing would do to a product before proposing it (dry_run).
+**Use when:** a paid app or product needs country-appropriate prices based on income and purchasing power rather than currency conversion; you want to see what purchasing-power pricing would do to a product before proposing it (dry_run).
 
 **Don't use when:** you only want to change one territory's price (use propose_metadata_change with iap_price or subscription_price); you want to apply a matrix that was already approved (use apply_change).
 

@@ -52,6 +52,7 @@ Short recipes for common agent flows, built entirely from the tools in the [tool
 3. `inspect_competitor` shows which locales competitors ship.
 4. Rank the gaps by traffic, missing locale and competitor activity.
 5. `propose_metadata_change` with the new locales. The agent translates the copy itself; the proposal is checked before it reaches the approval queue. Refused outright: a locale code App Store Connect does not accept (the error names the right one, `sl` to `sl-SI`), a value over that field's character limit in that locale, and an Apple product name in name or subtitle (App Review 5.2.5 rejects those; the keywords field is the place for them). Flagged for the human to confirm: a translated description that lost the source's Privacy Policy or support URL, a keywords field copied verbatim from the source locale, keywords repeating words already in the name or subtitle, and pricing or free-trial claims in description or promotional text.
+6. Marketing URL and Support URL use the same approval and verification flow. Both must be absolute HTTP(S) URLs.
 
 ## Harvest keywords
 
@@ -129,7 +130,7 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 
 **When:** repricing one in-app purchase or one subscription. Needs App Store Connect.
 
-1. `inspect_products` lists the app's in-app purchases and subscriptions with their current prices and the exact price Apple offers today; take the product id from there.
+1. `inspect_products` separates a subscription's current storefront price from its next scheduled price and preserved legacy prices for existing subscribers; take the product id from there.
 2. Repricing every country at once is a different tool: see [Price a product for every country](#price-a-product-for-every-country). This playbook changes one territory.
 3. `propose_metadata_change` with `iap_price` or `subscription_price`. One proposal carries one product price: the two fields cannot be combined, and repricing several products means several proposals.
 4. `customer_price` must match an existing App Store Connect price point exactly, otherwise the proposal is refused with `INVALID_INPUT`. For an in-app purchase, `base_territory` must be the territory the product's price schedule is actually based on; changing which territory it is based on is not supported.
@@ -139,14 +140,14 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 
 ## Price a product for every country
 
-**When:** one product costs the same everywhere and you want country-appropriate prices. Needs App Store Connect.
+**When:** a paid app or product needs country-appropriate prices based on income and purchasing power, not a currency conversion. Needs App Store Connect.
 
-1. `inspect_products` gives the product id and its current prices. Decide the base price first: the whole matrix is derived from one territory's price, USA by default.
-2. `propose_price_matrix` with `dry_run: true` shows what the model would do without creating anything. It is an expensive call (dozens of App Store Connect requests), so tune `elasticity`, `floor` and `ceiling` on the dry run rather than on repeated proposals.
+1. Choose `product_type: app` for the paid app itself, without `product_id`. For IAP or subscription, `inspect_products` gives the product id and real current non-preserved price. Scheduled and legacy cohort prices are shown separately and never become the matrix's `before` value. Decide the base price first: the whole matrix is derived from one territory's price, USA by default.
+2. `propose_price_matrix` with `dry_run: true` shows what the model would do without creating anything. It uses country-level GDP PPP and GNI PPP per capita, not exchange rates. Tune `elasticity`, `floor`, `ceiling` and, when needed, `economic_weights` on the dry run rather than on repeated proposals.
 3. Prices come from Apple's own price grid, not from a currency conversion: each territory gets a real price point Apple offers there. `exclude_territories` leaves a country's price untouched; `overrides` sets an explicit coefficient for one country, for example a promotional `0.5`.
-4. For an in-app purchase, `base_territory` must be the territory the price schedule is actually based on. If Apple's schedule is anchored elsewhere, the tool refuses rather than silently rebasing it.
+4. For a paid app or in-app purchase, `base_territory` must be the territory the price schedule is actually based on. If Apple's schedule is anchored elsewhere, the tool refuses rather than silently rebasing it.
 5. Drop the dry run to create the change. It is always high risk, and it waits for a human in Approvals unless you pass `allow_auto_approve: true` **and** every territory already has a price **and** no territory moves more than 15% **and** the workspace policy allows high-risk changes to run on auto. Otherwise a human approves it.
-6. `apply_change` writes it. An in-app purchase is written as one atomic schedule replacement: it either lands everywhere or nowhere, and territories the matrix excluded keep the price they had. A subscription is written one territory at a time, so it can land partially; the reply lists every territory Apple refused, and re-applying the same matrix picks up the stragglers. Existing subscribers always keep their current price.
+6. `apply_change` writes it. A paid app or in-app purchase is written as one atomic schedule replacement: it either lands everywhere or nowhere, and territories the matrix excluded keep the price they had. A subscription is written one territory at a time, so it can land partially; the reply lists every territory Apple refused, and re-applying the same matrix picks up the stragglers. Existing subscribers always keep their current price.
 7. `get_change_status` reports the verification a few minutes later: the platform re-reads the live prices and names any territory that does not match what was approved.
 
 ## Publish a new build
