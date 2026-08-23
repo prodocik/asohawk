@@ -429,11 +429,11 @@ List hypotheses currently under observation, with their window and evidence trai
 
 ### get_change_status
 
-**Scope:** read | **Cost:** cheap | **Version:** 1.0.0
+**Scope:** read | **Cost:** cheap | **Version:** 1.1.0
 
-Check a proposed change's status, diff, risk and (once available) verification result.
+Check a proposed change's status, diff, risk and (once available) verification result. Verification status 'scheduled' means an approved subscription price matches App Store Connect's next price with a future effectiveAt; it is not the current storefront price yet. Subscription price matrices also report currentCount, scheduledCount and mismatched territories. Any valid future match receives one automatic read-only follow-up after the latest effectiveAt plus ten minutes, even when a mismatch elsewhere has higher priority; an error remains higher priority than both.
 
-**Use when:** you want to know whether a proposed change was approved, applied or rejected.
+**Use when:** you want to know whether a proposed change was approved, applied or rejected; you want to distinguish a subscription price that is already current from one App Store Connect has only scheduled for a future effectiveAt.
 
 **Don't use when:** you want the whole queue at once (use list_pending_changes).
 
@@ -677,11 +677,11 @@ Cancel a proposed change that is awaiting approval or already approved but not y
 
 ### apply_change
 
-**Scope:** write | **Cost:** standard | **Version:** 1.6.0
+**Scope:** write | **Cost:** standard | **Version:** 1.7.0
 
-Apply an approved metadata change to the App Store listing. On success, 'limitations' carries non-blocking warnings for any locale on the affected version still missing description/whatsNew (App Store Connect will refuse submission until they are set, but nothing here is blocked by it). A price change is re-verified against a live App Store Connect read immediately before writing (not just the propose-time snapshot) — a price point Apple retired since approval is refused rather than written stale. The same applies to in-app-purchase and subscription prices, and their product id is additionally re-checked against this app's live product list, so an approved change that names a product this app does not own writes nothing.
+Apply an approved metadata change to the App Store listing. On success, 'limitations' carries non-blocking warnings for any locale on the affected version still missing description/whatsNew (App Store Connect will refuse submission until they are set, but nothing here is blocked by it). A price change is re-verified against a live App Store Connect read immediately before writing (not just the propose-time snapshot) — a price point Apple retired since approval is refused rather than written stale. The same applies to in-app-purchase and subscription prices, and their product id is additionally re-checked against this app's live product list, so an approved change that names a product this app does not own writes nothing. A successful subscription_price or subscription price_matrix response includes scheduled: true and effective_at: until that future date the approved price is only App Store Connect's next price, not the current storefront price; use get_change_status for verification and the one automatic post-effective follow-up.
 
-**Use when:** a change's status is 'approved' (a human approved it on the Approvals page) and you have verified every required_confirmations item with the user.
+**Use when:** a change's status is 'approved' (a human approved it on the Approvals page) and you have verified every required_confirmations item with the user; you are ready to schedule an approved subscription price and will treat effective_at, not the successful write alone, as the boundary for calling it current.
 
 **Don't use when:** the change is still 'awaiting_approval' (ask the user to approve it in the Approvals page first); you want a full submission checklist rather than one change's leftover gaps (use get_release_readiness).
 
