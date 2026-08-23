@@ -687,13 +687,13 @@ Apply an approved metadata change to the App Store listing. On success, 'limitat
 
 ### request_screenshot_upload
 
-**Scope:** write | **Cost:** expensive | **Version:** 1.0.0
+**Scope:** write | **Cost:** expensive | **Version:** 1.1.0
 
-Reserve upload slots for one or more screenshot files (one locale + display type) and get back signed URLs to PUT the raw bytes to.
+Reserve upload slots for one or more screenshot files (one locale + display type) and get signed PUT URLs. The tool call itself does not spend the expensive quota: each valid PUT reserves one hit immediately before storage, keeps it only after a successful storage write, and releases it on a platform storage failure.
 
-**Use when:** you have screenshot files ready to upload before proposing a screenshots change.
+**Use when:** you have screenshot files ready to upload before proposing a screenshots change; you need retryable signed uploads where invalid files and platform storage failures do not consume the expensive quota.
 
-**Don't use when:** you already uploaded files and just want to propose the change (use propose_screenshot_change).
+**Don't use when:** you already uploaded files and just want to propose the change (use propose_screenshot_change); the PUT endpoint returns 429 (wait for Retry-After before retrying that pending reservation).
 
 ### propose_screenshot_change
 
