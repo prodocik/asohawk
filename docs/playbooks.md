@@ -100,7 +100,7 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 **When:** starting a session and checking what changed since the last visit.
 
 1. `get_events_since` with the stored cursor: domain events since the last visit (competitor metadata, version and price changes, own keywords entering or leaving the top 10, closed hypothesis windows).
-2. `list_pending_changes`: what waits for a human approval, the most actionable item of the briefing.
+2. `list_pending_changes`: what waits for a human approval, the most actionable item of the briefing. If an item is obsolete or superseded, use `cancel_change` so it cannot be approved or applied; it remains in history and nothing is sent to App Store Connect.
 3. `get_active_hypotheses`: which observation windows are close to their end.
 4. `compare_periods` (week_over_week preset or a short window): how ranks, visibility and downloads moved. Its `known_changes` block lists releases and listing changes the platform recorded inside the window, yours and competitors', so moves come pre-attributed.
 5. `list_tasks` (open, assigned to the user): what is stuck on a human.
