@@ -429,11 +429,11 @@ List hypotheses currently under observation, with their window and evidence trai
 
 ### get_change_status
 
-**Scope:** read | **Cost:** cheap | **Version:** 1.1.0
+**Scope:** read | **Cost:** cheap | **Version:** 1.2.0
 
-Check a proposed change's status, diff, risk and (once available) verification result. Verification status 'scheduled' means an approved subscription price matches App Store Connect's next price with a future effectiveAt; it is not the current storefront price yet. Subscription price matrices also report currentCount, scheduledCount and mismatched territories. Any valid future match receives one automatic read-only follow-up after the latest effectiveAt plus ten minutes, even when a mismatch elsewhere has higher priority; an error remains higher priority than both.
+Check a proposed change's status, diff, risk, durable async apply progress and (once available) verification result. Subscription price matrices move through applying/apply_failed and report per-territory progress in apply_result; apply_failed requires explicit resume_failed: true after live reconciliation. Verification status 'scheduled' means an approved subscription price matches App Store Connect's next price with a future effectiveAt; it is not the current storefront price yet. Subscription price matrices also report currentCount, scheduledCount and mismatched territories. Any valid future match receives one automatic read-only follow-up after the latest effectiveAt plus ten minutes, even when a mismatch elsewhere has higher priority; an error remains higher priority than both.
 
-**Use when:** you want to know whether a proposed change was approved, applied or rejected; you want to distinguish a subscription price that is already current from one App Store Connect has only scheduled for a future effectiveAt.
+**Use when:** you want to know whether a proposed change was approved, applied or rejected; a subscription price matrix is applying asynchronously or apply_failed and you need its durable per-territory progress before deciding whether to resume; you want to distinguish a subscription price that is already current from one App Store Connect has only scheduled for a future effectiveAt.
 
 **Don't use when:** you want the whole queue at once (use list_pending_changes).
 
@@ -441,7 +441,7 @@ Check a proposed change's status, diff, risk and (once available) verification r
 
 **Scope:** read | **Cost:** cheap | **Version:** 1.0.0
 
-List proposed metadata changes awaiting approval or already approved (not yet applied).
+List proposed metadata changes awaiting approval, applying asynchronously, or needing an explicit resume after a failed subscription matrix run.
 
 **Use when:** you want to see what is already queued before proposing something new, or check whether a change was approved.
 
@@ -677,9 +677,9 @@ Cancel a proposed change that is awaiting approval or already approved but not y
 
 ### apply_change
 
-**Scope:** write | **Cost:** standard | **Version:** 1.7.0
+**Scope:** write | **Cost:** standard | **Version:** 1.8.0
 
-Apply an approved metadata change to the App Store listing. On success, 'limitations' carries non-blocking warnings for any locale on the affected version still missing description/whatsNew (App Store Connect will refuse submission until they are set, but nothing here is blocked by it). A price change is re-verified against a live App Store Connect read immediately before writing (not just the propose-time snapshot) — a price point Apple retired since approval is refused rather than written stale. The same applies to in-app-purchase and subscription prices, and their product id is additionally re-checked against this app's live product list, so an approved change that names a product this app does not own writes nothing. A successful subscription_price or subscription price_matrix response includes scheduled: true and effective_at: until that future date the approved price is only App Store Connect's next price, not the current storefront price; use get_change_status for verification and the one automatic post-effective follow-up.
+Apply an approved metadata change to the App Store listing. Subscription price matrices use a durable asynchronous worker: this request only claims the approved run, persists confirmations/progress, and enqueues BullMQ; it performs no App Store Connect writes. Poll get_change_status for per-territory apply_result. If a run reaches apply_failed, reconcile live ASC state and explicitly call resume_failed: true to start a new run. Other changes keep their existing synchronous apply behavior. On success, 'limitations' carries non-blocking warnings for any locale on the affected version still missing description/whatsNew (App Store Connect will refuse submission until they are set, but nothing here is blocked by it). A price change is re-verified against a live App Store Connect read immediately before writing (not just the propose-time snapshot) — a price point Apple retired since approval is refused rather than written stale. The same applies to in-app-purchase and subscription prices, and their product id is additionally re-checked against this app's live product list, so an approved change that names a product this app does not own writes nothing. A successful single subscription_price response includes scheduled: true and effective_at; a subscription price_matrix is reported only after the worker verifies every territory.
 
 **Use when:** a change's status is 'approved' (a human approved it on the Approvals page) and you have verified every required_confirmations item with the user; you are ready to schedule an approved subscription price and will treat effective_at, not the successful write alone, as the boundary for calling it current.
 

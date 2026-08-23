@@ -169,6 +169,7 @@ Every tool returns the same envelope: the answer under `data`, plus `data_freshn
 
 - **Scoped keys.** Read keys see read tools only; write tools are invisible to them, not just refused.
 - **Human approval on writes.** Metadata changes, screenshot changes, price changes and App Review submissions are proposals first. A human approves them in the dashboard before anything reaches App Store Connect. High-risk operations (name or description rewrites, prices, review submissions) wait for a human even in workspaces that enable auto-apply. The single exception, off by default and per call: a purchasing-power price matrix may run on auto when every territory already has a price and none of them moves more than 15%.
+- **Durable subscription repricing.** A country-wide subscription matrix runs in the background with per-territory progress. It is marked applied only after a complete live App Store Connect read verifies every country; failed runs require an explicit reconciled resume, and ambiguous network outcomes are never retried blindly. Existing subscribers keep their price.
 - **Per-domain read controls.** Each data domain can be switched off for agents independently.
 - **A closed error contract.** Refusals carry a reason code, whether a retry can succeed, and alternative tools; agents recover instead of hallucinating.
 
