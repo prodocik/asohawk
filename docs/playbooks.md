@@ -130,7 +130,7 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 
 **When:** repricing one in-app purchase or one subscription. Needs App Store Connect.
 
-1. `inspect_products` separates a subscription's current storefront price from its next scheduled price and preserved legacy prices for existing subscribers; take the product id from there.
+1. `inspect_products` separates a subscription's real current storefront price from its next scheduled price; take the product id from there. It reports whether price preservation is configured, but actual prices paid by existing subscribers require Apple's transaction-level Subscriber reports and are not inferred from ASC configuration rows.
 2. Repricing every country at once is a different tool: see [Price a product for every country](#price-a-product-for-every-country). This playbook changes one territory.
 3. `propose_metadata_change` with `iap_price` or `subscription_price`. One proposal carries one product price: the two fields cannot be combined, and repricing several products means several proposals.
 4. `customer_price` must match an existing App Store Connect price point exactly, otherwise the proposal is refused with `INVALID_INPUT`. For an in-app purchase, `base_territory` must be the territory the product's price schedule is actually based on; changing which territory it is based on is not supported.
@@ -142,7 +142,7 @@ In the web app, an ASC locale with no tracked terms offers **Copy keyword resear
 
 **When:** a paid app or product needs country-appropriate prices based on income and purchasing power, not a currency conversion. Needs App Store Connect.
 
-1. Choose `product_type: app` for the paid app itself, without `product_id`. For IAP or subscription, `inspect_products` gives the product id and real current non-preserved price. Scheduled and legacy cohort prices are shown separately and never become the matrix's `before` value. Decide the base price first: the whole matrix is derived from one territory's price, USA by default.
+1. Choose `product_type: app` for the paid app itself, without `product_id`. For IAP or subscription, `inspect_products` gives the product id and real current storefront price. A scheduled next price is shown separately; preserved ASC configuration rows are not presented as prices real subscribers pay and never become the matrix's `before` value. Decide the base price first: the whole matrix is derived from one territory's price, USA by default.
 2. `propose_price_matrix` with `dry_run: true` shows what the model would do without creating anything. It uses country-level GDP PPP and GNI PPP per capita, not exchange rates. Tune `elasticity`, `floor`, `ceiling` and, when needed, `economic_weights` on the dry run rather than on repeated proposals.
 3. Prices come from Apple's own price grid, not from a currency conversion: each territory gets a real price point Apple offers there. `exclude_territories` leaves a country's price untouched; `overrides` sets an explicit coefficient for one country, for example a promotional `0.5`.
 4. For a paid app or in-app purchase, `base_territory` must be the territory the price schedule is actually based on. If Apple's schedule is anchored elsewhere, the tool refuses rather than silently rebasing it.
