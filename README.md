@@ -156,9 +156,11 @@ Exact snippets for every client, plus a stdio bridge for clients without remote 
 
 ## What the agent can do
 
-62 tools cover the full ASO loop: rankings and keyword tracking, competitor discovery and monitoring, review streams, ASO health and recommendations, acquisition and retention funnels, revenue, keyword difficulty and popularity scoring, exact Apple Search Ads popularity on demand, chart moves, hypotheses and learnings, App Store Connect metadata edits, screenshot changes, native A/B tests (Product Page Optimization), paid-app, IAP and subscription repricing (one territory or a purchasing-power matrix across all 175), build attachment and App Review submission.
+64 tools cover the full ASO loop: rankings and keyword tracking, competitor discovery and monitoring, review streams, ASO health and recommendations, acquisition and retention funnels, revenue, keyword difficulty and popularity scoring, exact Apple Search Ads popularity on demand, chart moves, hypotheses and learnings, App Store Connect metadata edits, screenshot changes, native A/B tests (Product Page Optimization), paid-app, IAP and subscription repricing (one territory or a purchasing-power matrix across all 175), build attachment and App Review submission.
 
 Every tool returns the same envelope: the answer under `data`, plus `data_freshness`, honest `limitations`, `recommended_next_capabilities` and a `cost_class`. Agents do not guess what a number means or what to call next; the response says so.
+
+Lists inside `data` are tabular — `{columns, rows}` with positional cells — so a field name is written once, not once per row; the server states that reading rule in its instructions. Connecting with `?profile=core` (or `?profile=keywords,changes`) lists fewer tools up front without changing what the key may call: `list_capabilities` still names everything, marking what the profile left out.
 
 - **[Tool reference](TOOLS.md)**: every tool with its contract, generated from the live registry.
 - **[Playbooks](docs/playbooks.md)**: 16 step-by-step recipes, from onboarding an app to shipping a build through App Review.
