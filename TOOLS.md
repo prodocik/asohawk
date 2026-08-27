@@ -196,9 +196,9 @@ Find terms where two or more of your own apps currently rank in the same storefr
 
 ### get_asa_snapshot_status
 
-**Scope:** read | **Cost:** cheap | **Version:** 1.0.0
+**Scope:** read | **Cost:** cheap | **Version:** 1.1.0
 
-Live state of one ASA snapshot run: queued/running/succeeded/failed, keywords asked, keywords answered, readings stored, and the failure reason.
+Live state of one ASA snapshot run: queued/running/succeeded/failed, keywords asked, keywords answered, readings stored, and the failure reason — or, on a succeeded run, a note naming storefronts it had to skip.
 
 **Use when:** you started an ASA snapshot and need to know whether its readings landed; a run produced nothing and you need to tell failure from keywords too low-demand to get a number; you want to know whether the provider answered for everything it was asked.
 
