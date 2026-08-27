@@ -386,11 +386,11 @@ List tasks on the shared board, filtered by status/assignee/app/source.
 
 ### analyze_keyword_field
 
-**Scope:** read | **Cost:** expensive | **Version:** 2.0.0
+**Scope:** read | **Cost:** expensive | **Version:** 2.1.0
 
-Break your own app's live ASC keywords field down term by term: which rank and where, their trend, how much of the ~100-character budget goes to dead terms, plus candidate terms mined from tracked competitors' public metadata.
+Break your own app's live ASC keywords field down term by term: rank, trend, and a demand verdict per term (working / opportunity / no_demand / unmeasured), how the ~100-character budget splits between them, plus candidate terms mined from tracked competitors' public metadata. The split is by search demand first and rank second: a term at Apple's minimum Search Popularity is dead weight even at rank 1, and a term with real demand and no rank yet is what the budget is for.
 
-**Use when:** deciding what to keep, drop, or add before proposing a new keyword field; diagnosing why a keyword field underperforms.
+**Use when:** deciding what to keep, drop, or add before proposing a new keyword field; diagnosing why a keyword field underperforms; checking whether the characters you are defending stand in front of real searches or only in front of good ranks.
 
 **Don't use when:** the app is a competitor or has no ASC connection — the private field is unreadable (use inspect_competitor); you only need current standings for tracked keywords (use get_tracked_keywords).
 
@@ -668,11 +668,11 @@ Manually close a hypothesis with an outcome and note.
 
 ### propose_metadata_change
 
-**Scope:** write | **Cost:** standard | **Version:** 1.7.0
+**Scope:** write | **Cost:** standard | **Version:** 1.8.0
 
-Queue a listing change for human approval: text fields per locale, plus category, age rating, app price, for-sale territories, or one product price. Nothing reaches the App Store until apply_change runs on an approved change. Pre-flight refuses INVALID_INPUT for a non-ASC locale code (bare 'en'/'fr'), an over-limit value, or an Apple product name in name/subtitle (App Review 5.2.5). Softer findings (dropped Privacy Policy URL, untranslated copy, price/trial claims) become extra required_confirmations plus limitations.
+Queue a listing change for human approval: text fields per locale, plus category, age rating, app price, for-sale territories, or one product price. Nothing reaches the App Store until apply_change runs on an approved change. Pre-flight refuses INVALID_INPUT for a non-ASC locale code (bare 'en'/'fr'), an over-limit value, or an Apple product name in name/subtitle (App Review 5.2.5). Softer findings (dropped Privacy Policy URL, untranslated copy, price/trial claims, keyword terms this storefront measures as unsearched or has never measured) become extra required_confirmations plus limitations.
 
-**Use when:** you have a specific listing edit to queue for the user's approval; you are fanning a listing out into several locales and want codes, limits and translation completeness checked first; you want to change the app's App Store category; you want to change the age-rating declaration; you want to change the app's price or for-sale territories; you want to reprice one in-app purchase or subscription (id from inspect_products).
+**Use when:** you have a specific listing edit to queue for the user's approval; you are fanning a listing out into several locales and want codes, limits, translation completeness and keyword demand checked first; you want to change the app's App Store category; you want to change the age-rating declaration; you want to change the app's price or for-sale territories; you want to reprice one in-app purchase or subscription (id from inspect_products).
 
 **Don't use when:** the change is already approved (use apply_change); you only want to read current metadata (use inspect_metadata); you mean ASOHawk's keyword-tracking scope, not real App Store availability (use set_countries); you want to reprice several products at once — one proposal carries one product price; you only want to read what products and prices exist (use inspect_products).
 
