@@ -387,9 +387,9 @@ List tasks on the shared board, filtered by status/assignee/app/source.
 
 ### analyze_keyword_field
 
-**Scope:** read | **Cost:** expensive | **Version:** 2.1.0
+**Scope:** read | **Cost:** expensive | **Version:** 3.0.0
 
-Break your own app's live ASC keywords field down term by term: rank, trend, and a demand verdict per term (working / opportunity / no_demand / unmeasured), how the ~100-character budget splits between them, plus candidate terms mined from tracked competitors' public metadata. The split is by search demand first and rank second: a term at Apple's minimum Search Popularity is dead weight even at rank 1, and a term with real demand and no rank yet is what the budget is for.
+Break your own app's live ASC keywords field down term by term: rank, trend, and a demand verdict per term (working / opportunity / no_demand / unmeasured), and how the ~100-character budget splits between them. The split is by search demand first and rank second: a term at Apple's minimum Search Popularity is dead weight even at rank 1, and a term with real demand and no rank yet is what the budget is for.
 
 **Use when:** deciding what to keep, drop, or add before proposing a new keyword field; diagnosing why a keyword field underperforms; checking whether the characters you are defending stand in front of real searches or only in front of good ranks.
 
@@ -553,9 +553,9 @@ Post a short progress note on a task you are assigned to (visibility into a long
 
 ### add_app
 
-**Scope:** write | **Cost:** standard | **Version:** 1.0.0
+**Scope:** write | **Cost:** standard | **Version:** 2.0.0
 
-Start tracking an App Store app (your own or a competitor) by its track id, seeding starter keywords.
+Start tracking an App Store app (your own or a competitor) by its track id. No keywords are added: pick relevant ones yourself and call track_keywords.
 
 **Use when:** you resolved a track id and want to begin tracking that app.
 
