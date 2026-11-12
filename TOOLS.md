@@ -117,7 +117,7 @@ Summarise one app's current ASO state: visibility score and its trend, ASO healt
 
 **Scope:** read | **Cost:** cheap | **Version:** 1.0.0
 
-Report what the workspace has connected: how many apps (own vs competitor), which data layers are active, the health of each connected integration (ASC/GA4/Apify), and the plan quotas.
+Report what the workspace has connected: how many apps (own vs competitor), which data layers are active, the health of each connected integration (ASC/GA4/Apify/RevenueCat), and the plan quotas.
 
 **Use when:** you need to know what data is available before planning work.
 
@@ -345,11 +345,11 @@ Summarise an app's App Store acquisition: downloads over time, the impressions/p
 
 ### inspect_revenue
 
-**Scope:** read | **Cost:** standard | **Version:** 2.0.0
+**Scope:** read | **Cost:** standard | **Version:** 2.1.0
 
-Summarise an app's App Store proceeds, subscription base, trial conversion, churn and an approximate ARPPU, by country.
+Summarise an app's App Store proceeds, subscription base, trial conversion, churn and an approximate ARPPU, by country, plus the RevenueCat project's overview metrics and daily revenue when RevenueCat is connected.
 
-**Use when:** you want revenue or subscription health for an app; you want a rough ARPPU/MRR estimate with its caveats spelled out.
+**Use when:** you want revenue or subscription health for an app; you want a rough ARPPU/MRR estimate with its caveats spelled out; you want RevenueCat's own overview metrics or revenue for the app's project.
 
 **Don't use when:** you need acquisition/funnel data (use inspect_acquisition).
 
